@@ -35,7 +35,10 @@ Page({
     }
   },
 
-  selectCandidate(candidate) {
+  selectCandidate(event) {
+    const candidate = event.currentTarget.dataset.candidate;
+    if (!candidate) return;
+
     this.setData({ isCandidate: true });
     storage.set('current_model', candidate);
     wx.navigateTo({

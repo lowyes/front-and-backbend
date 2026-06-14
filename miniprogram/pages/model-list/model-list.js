@@ -42,7 +42,10 @@ Page({
     }
   },
 
-  selectModel(model) {
+  selectModel(event) {
+    const model = event.currentTarget.dataset.model;
+    if (!model) return;
+
     storage.set('current_model', model);
     wx.navigateTo({
       url: '/pages/model-viewer/model-viewer',

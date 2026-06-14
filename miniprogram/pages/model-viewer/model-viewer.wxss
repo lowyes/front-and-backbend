@@ -125,6 +125,34 @@ page {
   gap: 24rpx;
 }
 
+.bottom-actions {
+  margin-top: 32rpx;
+}
+
+.nav-btn {
+  height: 88rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-btn.secondary {
+  background: #E0F2FE;
+  border: 1rpx solid #BAE6FD;
+}
+
+.nav-btn-text {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #0369A1;
+}
+
+.error-back-btn {
+  width: 100%;
+  margin-top: 20rpx;
+}
+
 .action-card {
   flex: 1;
   display: flex;

@@ -29,7 +29,7 @@
 
     <view class="model-preview">
       <view class="preview-placeholder">
-        <text class="placeholder-icon">🔷</text>
+        <text class="placeholder-icon">◆</text>
         <text class="placeholder-title">三维模型预览区</text>
         <text class="placeholder-text">这里将显示 glTF / GLB 三维模型</text>
         <text class="placeholder-hint">支持旋转、缩放、平移操作</text>
@@ -38,27 +38,36 @@
 
     <view class="model-actions">
       <view class="action-card">
-        <text class="action-icon">🔄</text>
+        <text class="action-icon">↻</text>
         <text class="action-text">旋转视角</text>
       </view>
       <view class="action-card">
-        <text class="action-icon">🔍</text>
+        <text class="action-icon">⌕</text>
         <text class="action-text">缩放模型</text>
       </view>
       <view class="action-card">
-        <text class="action-icon">👆</text>
+        <text class="action-icon">☝</text>
         <text class="action-text">平移视图</text>
+      </view>
+    </view>
+
+    <view class="bottom-actions">
+      <view class="nav-btn secondary" bindtap="goBack">
+        <text class="nav-btn-text">返回上一页</text>
       </view>
     </view>
   </view>
 
   <view class="error-content" wx:elif="{{hasError}}">
     <view class="error-card">
-      <view class="error-icon">❌</view>
+      <view class="error-icon">×</view>
       <text class="error-title">加载失败</text>
       <text class="error-message">{{errorMessage}}</text>
       <view class="action-btn" bindtap="goBack">
         <text class="btn-text">返回</text>
+      </view>
+      <view class="nav-btn secondary error-back-btn" bindtap="goBack">
+        <text class="nav-btn-text">返回上一页</text>
       </view>
     </view>
   </view>
