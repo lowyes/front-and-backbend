@@ -304,44 +304,38 @@ function createScopedThreejs(canvas) {
       gl.clearColor(...this.clearColor, 1);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       gl.enable(gl.DEPTH_TEST);
-      gl.enable(gl.CULL_FACE);
 
       const program = this.createProgram();
       gl.useProgram(program);
 
       const positionLocation = gl.getAttribLocation(program, 'position');
       const colorLocation = gl.getUniformLocation(program, 'color');
-      const modelViewMatrixLocation = gl.getUniformLocation(program, 'modelViewMatrix');
-      const projectionMatrixLocation = gl.getUniformLocation(program, 'projectionMatrix');
+      const aspect = this.height ? this.width / this.height : 1;
+      const zoom = Math.max(camera.position.z, 1);
 
-      gl.uniformMatrix4fv(projectionMatrixLocation, false, camera.projectionMatrix.elements);
+      const projectVertex = (vertex, state) => {
+        const cosY = Math.cos(state.rotationY);
+        const sinY = Math.sin(state.rotationY);
+        const worldX = vertex.x * cosY + vertex.z * sinY + state.x;
+        const worldY = vertex.y + state.y;
+        return {
+          x: worldX / zoom * 2 / aspect,
+          y: worldY / zoom * 2,
+          z: 0,
+        };
+      };
 
-      const renderObject = (object, parentMatrix) => {
+      const renderObject = (object, parentState) => {
         if (!object.visible) return;
-        
-        object.updateMatrix();
-        let modelMatrix = object.matrix;
-        if (parentMatrix) {
-          modelMatrix = new Matrix4();
-          modelMatrix.elements.set(parentMatrix.elements);
-          modelMatrix.multiply(object.matrix);
-        }
+
+        const state = {
+          x: (parentState ? parentState.x : 0) + object.position.x,
+          y: (parentState ? parentState.y : 0) + object.position.y,
+          z: (parentState ? parentState.z : 0) + object.position.z,
+          rotationY: (parentState ? parentState.rotationY : 0) + object.rotation.y,
+        };
 
         if (object.geometry) {
-          const vertices = object.geometry.vertices;
-          const positions = new Float32Array(vertices.length * 3);
-          vertices.forEach((v, i) => {
-            positions[i * 3] = v.x + object.position.x;
-            positions[i * 3 + 1] = v.y + object.position.y;
-            positions[i * 3 + 2] = v.z + object.position.z;
-          });
-
-          const buffer = gl.createBuffer();
-          gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-          gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-          gl.enableVertexAttribArray(positionLocation);
-          gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
-
           const color = object.material ? object.material.color : 0x4A90D9;
           gl.uniform4f(colorLocation, 
             ((color >> 16) & 255) / 255,
@@ -349,19 +343,26 @@ function createScopedThreejs(canvas) {
             (color & 255) / 255,
             1);
 
-          const modelViewMatrix = new Matrix4();
-          modelViewMatrix.elements.set(camera.matrixWorld.elements);
-          modelViewMatrix.multiply(modelMatrix);
-          gl.uniformMatrix4fv(modelViewMatrixLocation, false, modelViewMatrix.elements);
-
           object.geometry.faces.forEach(face => {
-            gl.drawArrays(gl.TRIANGLE_FAN, face[0], face.length);
-          });
+            const positions = new Float32Array(face.length * 3);
+            face.forEach((vertexIndex, index) => {
+              const projected = projectVertex(object.geometry.vertices[vertexIndex], state);
+              positions[index * 3] = projected.x;
+              positions[index * 3 + 1] = projected.y;
+              positions[index * 3 + 2] = projected.z;
+            });
 
-          gl.deleteBuffer(buffer);
+            const buffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+            gl.enableVertexAttribArray(positionLocation);
+            gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
+            gl.drawArrays(gl.TRIANGLE_FAN, 0, face.length);
+            gl.deleteBuffer(buffer);
+          });
         }
 
-        object.children.forEach(child => renderObject(child, modelMatrix));
+        object.children.forEach(child => renderObject(child, state));
       };
 
       renderObject(scene, null);
@@ -370,10 +371,8 @@ function createScopedThreejs(canvas) {
       const gl = this.ctx;
       const vs = `
         attribute vec3 position;
-        uniform mat4 modelViewMatrix;
-        uniform mat4 projectionMatrix;
         void main() {
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          gl_Position = vec4(position, 1.0);
         }
       `;
       const fs = `
