@@ -1,0 +1,38 @@
+# Local editor/agent state
+.trae/
+.vscode/
+.idea/
+.claude/
+backend/.claude/
+
+# Python cache/build artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+*.egg-info/
+
+# JavaScript dependencies/build artifacts
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment and local secrets
+.env
+.env.*
+
+# WeChat developer local settings
+project.private.config.json
+
+# Generated backend diagnostics
+backend/data/debug/
+backend/data/glm_recognition/
+backend/data/test_images/generated/
+backend/experiments/
+backend/debug_*.py

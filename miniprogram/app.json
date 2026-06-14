@@ -1,0 +1,20 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/result/result",
+    "pages/model-viewer/model-viewer",
+    "pages/model-list/model-list",
+    "pages/debug/debug"
+  ],
+  "window": {
+    "backgroundColor": "#F8FAFC",
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "navigationBarTitleText": "工程制图辅助学习",
+    "navigationBarTextStyle": "black",
+    "navigationStyle": "custom"
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents"
+}
