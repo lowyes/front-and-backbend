@@ -28,26 +28,33 @@
     </view>
 
     <view class="model-preview">
-      <view class="preview-placeholder">
-        <text class="placeholder-icon">◆</text>
-        <text class="placeholder-title">三维模型预览区</text>
-        <text class="placeholder-text">这里将显示 glTF / GLB 三维模型</text>
-        <text class="placeholder-hint">支持旋转、缩放、平移操作</text>
+      <canvas 
+        type="webgl" 
+        id="modelCanvas" 
+        class="model-canvas"
+        bindtouchstart="onTouchStart"
+        bindtouchmove="onTouchMove"
+        bindtouchend="onTouchEnd"
+      ></canvas>
+      
+      <view class="loading-overlay" wx:if="{{isLoading}}">
+        <view class="loading-spinner"></view>
+        <text class="loading-text">加载中...</text>
       </view>
     </view>
 
     <view class="model-actions">
-      <view class="action-card">
-        <text class="action-icon">↻</text>
-        <text class="action-text">旋转视角</text>
+      <view class="action-card" bindtap="zoomOut">
+        <text class="action-icon">−</text>
+        <text class="action-text">缩小</text>
       </view>
-      <view class="action-card">
-        <text class="action-icon">⌕</text>
-        <text class="action-text">缩放模型</text>
+      <view class="action-card" bindtap="resetView">
+        <text class="action-icon">⟲</text>
+        <text class="action-text">重置视角</text>
       </view>
-      <view class="action-card">
-        <text class="action-icon">☝</text>
-        <text class="action-text">平移视图</text>
+      <view class="action-card" bindtap="zoomIn">
+        <text class="action-icon">+</text>
+        <text class="action-text">放大</text>
       </view>
     </view>
 
