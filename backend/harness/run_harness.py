@@ -2,7 +2,7 @@
 """Backend closed-loop harness.
 
 Verifies:
-manifest -> reference/features -> FastAPI API -> static glTF/bin URLs.
+manifest -> reference/features -> FastAPI API -> static 3D model URLs.
 For major changes, prefer `harness/verify_major.py`, which also runs this file.
 """
 
@@ -214,7 +214,7 @@ def post_image(client: TestClient, path: Path, mime_type: str):
         return client.post("/api/recognize", files={"file": (path.name, file, mime_type)})
 
 
-def check_api(client: TestClient, result: HarnessResult) -> None:
+def check_api(client: TestClient, result: HarnessResult, manifest: list[dict[str, Any]]) -> None:
     health = client.get("/api/health")
     if health.status_code == 200 and health.json().get("success") is True:
         result.pass_("/api/health")
@@ -228,10 +228,15 @@ def check_api(client: TestClient, result: HarnessResult) -> None:
     else:
         result.fail(f"/api/models failed: {models.status_code}")
 
-    for url, label in (
-        ("/static/models/part_0001/test2.gltf", "static glTF file accessible"),
-        ("/static/models/part_0001/data.bin", "static bin file accessible"),
-    ):
+    part = next((item for item in manifest if item.get("model_id") == "part_0001"), {})
+    static_urls = [(part.get("gltf_url"), "static model file accessible")]
+    if part.get("bin_file"):
+        static_urls.append((part.get("bin_file"), "static bin file accessible"))
+
+    for url, label in static_urls:
+        if not url:
+            result.fail("manifest part_0001 missing static model URL")
+            continue
         response = client.get(url)
         if response.status_code == 200:
             result.pass_(label)
@@ -265,13 +270,13 @@ def main() -> int:
     result = HarnessResult()
     check_required_files(result)
     check_change_logging_docs(result)
-    check_manifest(result)
+    manifest = check_manifest(result)
     check_gltf_references(result)
     check_reference_and_features(result)
 
     client = create_client(result)
     if client is not None:
-        check_api(client, result)
+        check_api(client, result, manifest)
 
     print()
     print("=" * 40)

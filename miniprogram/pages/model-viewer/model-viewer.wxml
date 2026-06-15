@@ -50,6 +50,8 @@
         <xr-light type="ambient" color="1 1 1" intensity="1.2" />
         <xr-light type="directional" rotation="45 30 0" color="1 1 1" intensity="2" />
 
+        <xr-node node-id="cameraTarget" position="0 0 0"></xr-node>
+
         <xr-node>
           <xr-gltf
             node-id="partModel"
@@ -66,7 +68,7 @@
           id="camera"
           node-id="camera"
           position="0 0 4"
-          target="0 0 0"
+          target="cameraTarget"
           near="0.01"
           far="1000"
           clear-color="0.06 0.09 0.15 1"

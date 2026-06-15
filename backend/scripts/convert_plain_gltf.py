@@ -9,10 +9,11 @@ import tempfile
 from pathlib import Path
 
 
-def convert_to_plain_gltf(input_gltf: Path, output_gltf: Path, output_bin: Path) -> None:
+def convert_to_plain_gltf(input_gltf: Path, output_gltf: Path, output_bin: Path, output_glb: Path | None = None) -> None:
     input_gltf = input_gltf.resolve()
     output_gltf = output_gltf.resolve()
     output_bin = output_bin.resolve()
+    output_glb = output_glb.resolve() if output_glb else None
     output_gltf.parent.mkdir(parents=True, exist_ok=True)
     output_bin.parent.mkdir(parents=True, exist_ok=True)
 
@@ -61,6 +62,18 @@ def convert_to_plain_gltf(input_gltf: Path, output_gltf: Path, output_bin: Path)
             encoding="utf-8",
         )
         shutil.copyfile(temp_bin, output_bin)
+        if output_glb:
+            subprocess.run(
+                [
+                    npx,
+                    "--yes",
+                    "@gltf-transform/cli",
+                    "copy",
+                    str(output_gltf),
+                    str(output_glb),
+                ],
+                check=True,
+            )
 
 
 def main() -> int:
@@ -68,11 +81,14 @@ def main() -> int:
     parser.add_argument("input_gltf", type=Path)
     parser.add_argument("output_gltf", type=Path)
     parser.add_argument("output_bin", type=Path)
+    parser.add_argument("--output-glb", type=Path, default=None)
     args = parser.parse_args()
 
-    convert_to_plain_gltf(args.input_gltf, args.output_gltf, args.output_bin)
+    convert_to_plain_gltf(args.input_gltf, args.output_gltf, args.output_bin, args.output_glb)
     print(f"Wrote {args.output_gltf}")
     print(f"Wrote {args.output_bin}")
+    if args.output_glb:
+        print(f"Wrote {args.output_glb}")
     return 0
 
 

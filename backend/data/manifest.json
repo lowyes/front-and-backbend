@@ -5,9 +5,9 @@
     "category": "基础零件",
     "ref_image": "data/ref_images/part_0001.png",
     "feature_file": "data/features/part_0001.npz",
-    "model_format": "gltf",
-    "gltf_url": "/static/models/part_0001/model_plain.gltf",
-    "bin_file": "/static/models/part_0001/model_plain.bin",
+    "model_format": "glb",
+    "gltf_url": "/static/models/part_0001/model_plain.glb",
+    "bin_file": null,
     "model_card": "data/model_cards/part_0001.json"
   }
 ]

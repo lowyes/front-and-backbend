@@ -49,10 +49,16 @@ Page({
     const normalized = { ...model };
     if (normalized.model_id === 'part_0001') {
       if (normalized.gltf_url && normalized.gltf_url.indexOf('/test2.gltf') !== -1) {
-        normalized.gltf_url = normalized.gltf_url.replace('/test2.gltf', '/model_plain.gltf');
+        normalized.gltf_url = normalized.gltf_url.replace('/test2.gltf', '/model_plain.glb');
+      }
+      if (normalized.gltf_url && normalized.gltf_url.indexOf('/model_plain.gltf') !== -1) {
+        normalized.gltf_url = normalized.gltf_url.replace('/model_plain.gltf', '/model_plain.glb');
       }
       if (normalized.bin_file && normalized.bin_file.indexOf('/data.bin') !== -1) {
-        normalized.bin_file = normalized.bin_file.replace('/data.bin', '/model_plain.bin');
+        normalized.bin_file = '';
+      }
+      if (normalized.bin_file && normalized.bin_file.indexOf('/model_plain.bin') !== -1) {
+        normalized.bin_file = '';
       }
     }
     storage.set('current_model', normalized);
