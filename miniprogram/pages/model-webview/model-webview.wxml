@@ -1,1 +1,0 @@
-<web-view src="{{viewerUrl}}" bindload="handleLoad" binderror="handleError"></web-view>

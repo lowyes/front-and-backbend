@@ -39,3 +39,4 @@ backend/debug_*.py
 
 # Local Codex run logs
 .codex-logs/
+.codex-tmp/

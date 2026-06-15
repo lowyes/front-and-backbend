@@ -30,7 +30,7 @@ Page({
     if (result.matched && result.top1) {
       storage.set('current_model', result.top1);
       wx.navigateTo({
-        url: `/pages/model-webview/model-webview?model_id=${encodeURIComponent(result.top1.model_id)}`,
+        url: `/pages/model-native/model-native?model_id=${encodeURIComponent(result.top1.model_id)}`,
       });
     }
   },
@@ -42,7 +42,7 @@ Page({
     this.setData({ isCandidate: true });
     storage.set('current_model', candidate);
     wx.navigateTo({
-      url: `/pages/model-webview/model-webview?model_id=${encodeURIComponent(candidate.model_id)}`,
+      url: `/pages/model-native/model-native?model_id=${encodeURIComponent(candidate.model_id)}`,
     });
   },
 

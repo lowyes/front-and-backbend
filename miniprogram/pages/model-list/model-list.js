@@ -48,7 +48,7 @@ Page({
 
     storage.set('current_model', model);
     wx.navigateTo({
-      url: `/pages/model-webview/model-webview?model_id=${encodeURIComponent(model.model_id)}`,
+      url: `/pages/model-native/model-native?model_id=${encodeURIComponent(model.model_id)}`,
     });
   },
 

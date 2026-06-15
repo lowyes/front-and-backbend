@@ -97,9 +97,6 @@
     </view>
 
     <view class="bottom-actions">
-      <view class="nav-btn primary" bindtap="openH5Viewer">
-        <text class="nav-btn-text">H5方式打开</text>
-      </view>
       <view class="nav-btn secondary" bindtap="goBack">
         <text class="nav-btn-text">返回上一页</text>
       </view>

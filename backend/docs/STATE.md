@@ -384,3 +384,42 @@ Do not mark a task complete without reporting verification results.
 - Result: PASS. Result-page and model-list navigation now target the H5 viewer, and the backend harness verifies `/viewer/model/part_0001`.
 - Known risks:
   - `pages/model-viewer` remains in the project as a fallback/experiment page and is no longer the primary navigation target.
+
+### 2026-06-15 13:20:00 +08:00
+
+- Agent/tool used: Codex via local PowerShell, `apply_patch`, npm/rollup.
+- Change scope: Replaced the mini program's primary 3D flow with a native `three-platformize` WebGL canvas page and removed the H5/web-view path from the app.
+- Files changed:
+  - `.gitignore`
+  - `app.py`
+  - `harness/run_harness.py`
+  - `docs/STATE.md`
+  - `../package.json`
+  - `../package-lock.json`
+  - `../rollup.config.js`
+  - `../tsconfig.json`
+  - `../miniprogram/app.json`
+  - `../miniprogram/chunks/three-platformize.js`
+  - `../miniprogram/pages/model-native/model-native.ts`
+  - `../miniprogram/pages/model-native/model-native.js`
+  - `../miniprogram/pages/model-native/model-native.wxml`
+  - `../miniprogram/pages/model-native/model-native.wxss`
+  - `../miniprogram/pages/model-native/model-native.json`
+  - `../miniprogram/pages/result/result.js`
+  - `../miniprogram/pages/result/result.wxml`
+  - `../miniprogram/pages/model-list/model-list.js`
+  - Removed `../miniprogram/pages/model-webview/`
+- Reason for change: The project should render 3D models entirely inside the WeChat mini program rather than relying on web-view/H5 domain configuration. The new page uses `three-platformize`, `WechatPlatform`, `GLTFLoader`, and `OrbitControls` on a native mini program WebGL canvas, loading the packaged local GLB directly.
+- Verification commands run:
+  - `npm run build:native3d`
+  - `node --check miniprogram\pages\model-native\model-native.js`
+  - `node --check miniprogram\pages\model-viewer\model-viewer.js`
+  - `node --check miniprogram\pages\result\result.js`
+  - `node --check miniprogram\pages\model-list\model-list.js`
+  - `conda run -n base python -m py_compile app.py harness\run_harness.py`
+  - `conda run -n base python harness\run_harness.py`
+  - `rg -n "model-webview|H5备用|/viewer/model|<web-view|web-view" miniprogram backend --glob "!backend/docs/STATE.md"`
+- Result: PASS. The mini program's primary navigation now opens `pages/model-native/model-native`, which renders the packaged local GLB on a native WebGL canvas through `three-platformize`.
+- Known risks:
+  - The native viewer requires running `npm run build:native3d` after editing `model-native.ts`.
+  - `npm install` reported two high-severity audit findings in legacy rollup-related dependencies inherited from the demo-compatible toolchain; they were not force-upgraded to avoid breaking the build.

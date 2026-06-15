@@ -137,20 +137,6 @@ Page({
     });
   },
 
-  openH5Viewer() {
-    if (!this.data.model || !this.data.model.model_id) {
-      wx.showToast({
-        title: '未找到模型ID',
-        icon: 'none',
-      });
-      return;
-    }
-
-    wx.navigateTo({
-      url: `/pages/model-webview/model-webview?model_id=${encodeURIComponent(this.data.model.model_id)}`,
-    });
-  },
-
   resetView() {
     this.setData({
       modelScale: 120,
