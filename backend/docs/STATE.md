@@ -315,3 +315,72 @@ Do not mark a task complete without reporting verification results.
   - `VLM_DISABLE_REMOTE=1` is the default for major verification; live GLM checks require `make verify-major-live-vlm` or `harness\verify_major.py --live-vlm`.
   - FastAPI TestClient still emits the existing Starlette deprecation warning about `httpx`.
 - Next suggested step: Keep future algorithm experiments outside the main repo path or under ignored scratch folders until they are ready to become maintained code.
+
+### 2026-06-15 12:55:00 +08:00
+
+- Agent/tool used: Codex via local PowerShell, `apply_patch`, glTF-Transform CLI.
+- Change scope: Made the mini program `xr-frame` model viewer load the demo model from a bundled local GLB instead of `127.0.0.1` backend URLs.
+- Files changed:
+  - `data/models/part_0001/model_plain.gltf`
+  - `data/models/part_0001/model_plain.glb`
+  - `../miniprogram/assets/models/part_0001/model_plain.glb`
+  - `../miniprogram/pages/model-viewer/model-viewer.js`
+  - `docs/STATE.md`
+- Reason for change: The WeChat DevTools viewer reached the `xr-frame` scene but still rendered a blank model area. Bundling the GLB removes local network/legal-domain variables, and the refreshed GLB uses a centered, unlit, double-sided, clearly colored material for easier rendering in the mini program.
+- Verification commands run:
+  - `node --check miniprogram\pages\model-viewer\model-viewer.js`
+  - `npx --yes @gltf-transform/cli inspect miniprogram\assets\models\part_0001\model_plain.glb`
+  - `npx --yes @gltf-transform/cli validate miniprogram\assets\models\part_0001\model_plain.glb`
+- Result: PASS. The local GLB is valid glTF 2.0, has no validation errors, no Draco requirement, one visible mesh, centered bounds, and double-sided unlit material.
+- Known risks:
+  - WeChat DevTools must be recompiled or cache-cleared to pick up the new packaged GLB.
+  - If the view is still blank, the next check should be the WeChat DevTools Console error emitted by `xr-frame` asset loading.
+
+### 2026-06-15 13:08:00 +08:00
+
+- Agent/tool used: Codex via local PowerShell, `apply_patch`, conda `base`.
+- Change scope: Added a fallback H5/Three.js model viewer while keeping the existing `xr-frame` mini program viewer.
+- Files changed:
+  - `app.py`
+  - `harness/run_harness.py`
+  - `docs/STATE.md`
+  - `../miniprogram/app.json`
+  - `../miniprogram/pages/model-viewer/model-viewer.js`
+  - `../miniprogram/pages/model-viewer/model-viewer.wxml`
+  - `../miniprogram/pages/model-viewer/model-viewer.wxss`
+  - `../miniprogram/pages/model-webview/model-webview.js`
+  - `../miniprogram/pages/model-webview/model-webview.wxml`
+  - `../miniprogram/pages/model-webview/model-webview.wxss`
+  - `../miniprogram/pages/model-webview/model-webview.json`
+- Reason for change: The WeChat `xr-frame` page still showed a blank/delayed loading state in DevTools. The H5 route `/viewer/model/{model_id}` gives a second rendering path using Three.js `GLTFLoader` and `OrbitControls`, so model rendering can be validated independently from `xr-frame`.
+- Verification commands run:
+  - `node --check miniprogram\pages\model-viewer\model-viewer.js`
+  - `node --check miniprogram\pages\model-webview\model-webview.js`
+  - `conda run -n base python -m py_compile app.py harness\run_harness.py`
+  - `conda run -n base python harness\run_harness.py`
+- Result: PASS. The harness now verifies `/viewer/model/part_0001` returns the H5 viewer and that the backend static GLB remains accessible.
+- Known risks:
+  - Mini program `web-view` requires domain/business-domain configuration for real deployment; in DevTools, disable domain checks for local testing.
+  - The H5 viewer imports Three.js from `https://unpkg.com`, so production should either keep an HTTPS-capable CDN path or bundle the viewer assets under the backend.
+
+### 2026-06-15 13:14:00 +08:00
+
+- Agent/tool used: Codex via local PowerShell, `apply_patch`.
+- Change scope: Switched the mini program's primary 3D model entrypoints to the H5/Three.js viewer.
+- Files changed:
+  - `.gitignore`
+  - `docs/STATE.md`
+  - `../miniprogram/pages/result/result.js`
+  - `../miniprogram/pages/result/result.wxml`
+  - `../miniprogram/pages/model-list/model-list.js`
+- Reason for change: Manual testing showed the H5 viewer renders `part_0001` correctly, while the `xr-frame` view still shows a blank scene. The main user flow should use the working H5 viewer instead of blocking on native 3D compatibility.
+- Verification commands run:
+  - `node --check miniprogram\pages\result\result.js`
+  - `node --check miniprogram\pages\model-list\model-list.js`
+  - `node --check miniprogram\pages\model-webview\model-webview.js`
+  - `node --check miniprogram\pages\model-viewer\model-viewer.js`
+  - `conda run -n base python -m py_compile app.py harness\run_harness.py`
+  - `conda run -n base python harness\run_harness.py`
+- Result: PASS. Result-page and model-list navigation now target the H5 viewer, and the backend harness verifies `/viewer/model/part_0001`.
+- Known risks:
+  - `pages/model-viewer` remains in the project as a fallback/experiment page and is no longer the primary navigation target.

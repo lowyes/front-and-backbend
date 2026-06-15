@@ -36,3 +36,6 @@ backend/data/glm_recognition/
 backend/data/test_images/generated/
 backend/experiments/
 backend/debug_*.py
+
+# Local Codex run logs
+.codex-logs/

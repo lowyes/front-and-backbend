@@ -64,7 +64,7 @@
       </view>
       <view class="action-row">
         <view class="action-btn primary" bindtap="goToModelViewer">
-          <text class="btn-icon">3D</text>
+          <text class="btn-icon">H5</text>
           <text class="btn-text">查看3D模型</text>
         </view>
         <view class="action-btn secondary" bindtap="toggleDebug">

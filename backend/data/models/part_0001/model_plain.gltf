@@ -79,9 +79,16 @@
     {
       "name": "color",
       "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.18,
+          0.55,
+          1,
+          1
+        ],
         "roughnessFactor": 0.18,
         "metallicFactor": 0
-      }
+      },
+      "doubleSided": true
     }
   ],
   "meshes": [

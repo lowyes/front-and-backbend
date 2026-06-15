@@ -158,6 +158,9 @@ page {
 
 .bottom-actions {
   margin-top: 32rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
 }
 
 .nav-btn {
@@ -171,6 +174,15 @@ page {
 .nav-btn.secondary {
   background: #E0F2FE;
   border: 1rpx solid #BAE6FD;
+}
+
+.nav-btn.primary {
+  background: #2563EB;
+  border: 1rpx solid #1D4ED8;
+}
+
+.nav-btn.primary .nav-btn-text {
+  color: #FFFFFF;
 }
 
 .nav-btn-text {

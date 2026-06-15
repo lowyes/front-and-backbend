@@ -3,6 +3,7 @@
     "pages/home/home",
     "pages/result/result",
     "pages/model-viewer/model-viewer",
+    "pages/model-webview/model-webview",
     "pages/model-list/model-list",
     "pages/debug/debug"
   ],

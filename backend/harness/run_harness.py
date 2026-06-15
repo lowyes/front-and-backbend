@@ -243,6 +243,12 @@ def check_api(client: TestClient, result: HarnessResult, manifest: list[dict[str
         else:
             result.fail(f"{url} returned HTTP {response.status_code}")
 
+    viewer = client.get("/viewer/model/part_0001")
+    if viewer.status_code == 200 and "GLTFLoader" in viewer.text and part.get("gltf_url", "") in viewer.text:
+        result.pass_("/viewer/model/part_0001 returns H5 viewer")
+    else:
+        result.fail(f"/viewer/model/part_0001 failed: {viewer.status_code}")
+
     response = post_image(client, project_path("data/ref_images/part_0001.png"), "image/png")
     body = response.json() if response.status_code == 200 else {}
     top1 = body.get("top1") or {}
