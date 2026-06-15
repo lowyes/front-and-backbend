@@ -28,7 +28,12 @@
     </view>
 
     <view class="model-preview">
-      <xr-scene id="xrScene" class="xr-scene" bind:ready="handleSceneReady">
+      <xr-scene
+        id="xrScene"
+        class="xr-scene"
+        style="width: 100%; height: 500rpx; display: block; border-radius: 16rpx; overflow: hidden; background: #0f172a;"
+        bind:ready="handleSceneReady"
+      >
         <xr-assets
           bind:progress="handleAssetsProgress"
           bind:loaded="handleAssetsLoaded"

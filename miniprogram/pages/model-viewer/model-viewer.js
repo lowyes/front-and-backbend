@@ -7,7 +7,7 @@ Page({
     errorMessage: '',
     isLoading: true,
     loadingText: '加载中...',
-    modelScale: 120,
+    modelScale: 80,
     modelRotation: '0 0 0',
   },
 
@@ -20,7 +20,7 @@ Page({
   },
 
   loadModel() {
-    const model = storage.get('current_model');
+    const model = this.normalizeModel(storage.get('current_model'));
     if (!model) {
       this.showError('未找到模型数据');
       return;
@@ -37,11 +37,26 @@ Page({
       errorMessage: '',
       isLoading: true,
       loadingText: '加载中...',
-      modelScale: 120,
+      modelScale: 80,
       modelRotation: '0 0 0',
     });
 
     this.startLoadTimer();
+  },
+
+  normalizeModel(model) {
+    if (!model) return model;
+    const normalized = { ...model };
+    if (normalized.model_id === 'part_0001') {
+      if (normalized.gltf_url && normalized.gltf_url.indexOf('/test2.gltf') !== -1) {
+        normalized.gltf_url = normalized.gltf_url.replace('/test2.gltf', '/model_plain.gltf');
+      }
+      if (normalized.bin_file && normalized.bin_file.indexOf('/data.bin') !== -1) {
+        normalized.bin_file = normalized.bin_file.replace('/data.bin', '/model_plain.bin');
+      }
+    }
+    storage.set('current_model', normalized);
+    return normalized;
   },
 
   startLoadTimer() {
@@ -128,20 +143,20 @@ Page({
 
   resetView() {
     this.setData({
-      modelScale: 120,
+      modelScale: 80,
       modelRotation: '0 0 0',
     });
   },
 
   zoomIn() {
     this.setData({
-      modelScale: Math.min(this.data.modelScale + 20, 300),
+      modelScale: Math.min(this.data.modelScale + 20, 220),
     });
   },
 
   zoomOut() {
     this.setData({
-      modelScale: Math.max(this.data.modelScale - 20, 20),
+      modelScale: Math.max(this.data.modelScale - 20, 10),
     });
   },
 });
