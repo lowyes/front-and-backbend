@@ -6,8 +6,8 @@
     "ref_image": "data/ref_images/part_0001.png",
     "feature_file": "data/features/part_0001.npz",
     "model_format": "gltf",
-    "gltf_url": "/static/models/part_0001/test2.gltf",
-    "bin_file": "/static/models/part_0001/data.bin",
+    "gltf_url": "/static/models/part_0001/model_plain.gltf",
+    "bin_file": "/static/models/part_0001/model_plain.bin",
     "model_card": "data/model_cards/part_0001.json"
   }
 ]

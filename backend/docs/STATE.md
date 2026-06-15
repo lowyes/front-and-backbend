@@ -28,6 +28,34 @@ Do not mark a task complete without reporting verification results.
 
 ## Change Log
 
+### 2026-06-15 12:29:26 +08:00
+
+- Agent/tool used: Codex via local PowerShell, `apply_patch`, glTF Transform CLI through `npx`, conda `base`.
+- Change scope: Converted the demo model pipeline from Draco-compressed glTF to mini-program-friendly plain glTF and switched the mini program model viewer to WeChat `xr-frame`.
+- Files changed:
+  - `data/manifest.json`
+  - `data/models/part_0001/model_plain.gltf`
+  - `data/models/part_0001/model_plain.bin`
+  - `scripts/convert_plain_gltf.py`
+  - `../miniprogram/pages/model-viewer/model-viewer.js`
+  - `../miniprogram/pages/model-viewer/model-viewer.json`
+  - `../miniprogram/pages/model-viewer/model-viewer.wxml`
+  - `../miniprogram/pages/model-viewer/model-viewer.wxss`
+  - Removed `../miniprogram/lib/threejs-miniprogram.js`
+- Reason for change: The original SolidWorks glTF required `KHR_draco_mesh_compression`, which the mini program did not decode. The backend now serves a decoded plain glTF/bin pair, and the front end uses official `xr-frame` components instead of the temporary hand-written WebGL renderer.
+- Verification commands run:
+  - `conda run -n base python -m py_compile backend\scripts\convert_plain_gltf.py`
+  - `conda run -n base python backend\scripts\convert_plain_gltf.py backend\data\models\part_0001\test2.gltf backend\data\models\part_0001\model_plain.gltf backend\data\models\part_0001\model_plain.bin`
+  - `npx --yes @gltf-transform/cli validate backend\data\models\part_0001\model_plain.gltf`
+  - `node --check miniprogram\pages\model-viewer\model-viewer.js`
+  - `conda run -n base python harness\run_harness.py`
+- Result: PASS. Plain glTF validation had no errors or warnings; only informational unused-object notes. Backend closed-loop harness passed with the manifest pointing to `model_plain.gltf` and `model_plain.bin`.
+- Known risks:
+  - WeChat Developer Tools compilation and visual `xr-frame` rendering were not available from this shell and still need manual validation in the mini program IDE.
+  - `xr-frame` requires a sufficiently recent WeChat base library/client version.
+  - Local simulator can use `127.0.0.1`; real-device testing needs the backend LAN IP and legal-domain/dev settings.
+- Next suggested step: Recompile in WeChat Developer Tools, confirm `xr-frame` loads the model, and adjust `modelScale`/camera position if the part appears too small or off-center.
+
 ### 2026-06-13 21:31:56 +08:00
 
 - Agent/tool used: Codex via local PowerShell, `apply_patch`, conda `base` verification planned.

@@ -28,18 +28,49 @@
     </view>
 
     <view class="model-preview">
-      <canvas 
-        type="webgl" 
-        id="modelCanvas" 
-        class="model-canvas"
-        bindtouchstart="onTouchStart"
-        bindtouchmove="onTouchMove"
-        bindtouchend="onTouchEnd"
-      ></canvas>
-      
+      <xr-scene id="xrScene" class="xr-scene" bind:ready="handleSceneReady">
+        <xr-assets
+          bind:progress="handleAssetsProgress"
+          bind:loaded="handleAssetsLoaded"
+          bind:error="handleAssetsError"
+        >
+          <xr-asset-load
+            type="gltf"
+            asset-id="current-part-model"
+            src="{{model.gltf_url}}"
+            options="ignoreError: -1"
+          />
+        </xr-assets>
+
+        <xr-light type="ambient" color="1 1 1" intensity="1.2" />
+        <xr-light type="directional" rotation="45 30 0" color="1 1 1" intensity="2" />
+
+        <xr-node>
+          <xr-gltf
+            node-id="partModel"
+            model="current-part-model"
+            position="0 0 0"
+            rotation="{{modelRotation}}"
+            scale="{{modelScale}} {{modelScale}} {{modelScale}}"
+            bind:gltf-loaded="handleGltfLoaded"
+            bind:gltf-error="handleGltfError"
+          />
+        </xr-node>
+
+        <xr-camera
+          id="camera"
+          node-id="camera"
+          position="0 0 4"
+          target="0 0 0"
+          near="0.01"
+          far="1000"
+          clear-color="0.06 0.09 0.15 1"
+        />
+      </xr-scene>
+
       <view class="loading-overlay" wx:if="{{isLoading}}">
         <view class="loading-spinner"></view>
-        <text class="loading-text">加载中...</text>
+        <text class="loading-text">{{loadingText}}</text>
       </view>
     </view>
 
@@ -72,9 +103,6 @@
       <text class="error-message">{{errorMessage}}</text>
       <view class="action-btn" bindtap="goBack">
         <text class="btn-text">返回</text>
-      </view>
-      <view class="nav-btn secondary error-back-btn" bindtap="goBack">
-        <text class="nav-btn-text">返回上一页</text>
       </view>
     </view>
   </view>
